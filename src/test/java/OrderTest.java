@@ -3,6 +3,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class OrderTest {
+    private final By locator;
     //private WebDriverFactory webDriverFactory= new WebDriverFactory();
     private WebDriver driver;
     //имя
@@ -33,8 +35,11 @@ public class OrderTest {
     private final String arrivalTimeData;
     //Срок аренды
     private final String arendaTimeData;
+    private LandingPageSamokat landingPageSamokat;
+    private CustomerInfoSamokatPage customerInfoSamokat;
+    private OrderInfoSamokatPage orderInfoSamokatPage;
 
-    public OrderTest(String nameData, String surnameData, String adressData, String metroData, String phoneData, String arrivalTimeData, String arendaTimeData) {
+    public OrderTest(String nameData, String surnameData, String adressData, String metroData, String phoneData, String arrivalTimeData, String arendaTimeData, By locator) {
         this.nameData = nameData;
         this.surnameData = surnameData;
         this.adressData = adressData;
@@ -42,36 +47,37 @@ public class OrderTest {
         this.phoneData = phoneData;
         this.arrivalTimeData = arrivalTimeData;
         this.arendaTimeData = arendaTimeData;
+        this.locator=locator;
     }
     @Parameterized.Parameters
     public static Object[][] getCustomerInfo() {
         return new Object[][]{
-                {"Имя", "Фамилия", "Бухарестская 123", "Арбатская", "77777777777","01.02.2025", "сутки"},
-                {"Лев", "Тимченко", "ул. Пушкина дом Колотушкина", "Черкизовская", "66666666666","01.02.2026", "двое суток"}
+                {"Имя", "Фамилия", "Бухарестская 123", "Арбатская", "77777777777","01.02.2025", "сутки", LandingPageSamokat.OrderButtonHeader},
+                {"Лев", "Тимченко", "ул. Пушкина дом Колотушкина", "Черкизовская", "66666666666","01.02.2026", "двое суток", LandingPageSamokat.OrderButtonMain}
         };
     }
     @Before
     public void setup(){
-        //driver = new FirefoxDriver();
-        driver = new ChromeDriver();
+        driver = new FirefoxDriver();
+        //driver = new ChromeDriver();
         driver.get(LandingPageSamokat.landingPageURL);
+        landingPageSamokat = new LandingPageSamokat(driver);
+        customerInfoSamokat = new CustomerInfoSamokatPage(driver);
+        orderInfoSamokatPage = new OrderInfoSamokatPage(driver);
 
     }
     @Test
-    public void enterCustomerInfoTestHeaderButton(){
-        LandingPageSamokat landingPageSamokat = new LandingPageSamokat(driver);
+    public void enterCustomerInfoTest(){
         landingPageSamokat.closeCookie();
-        landingPageSamokat.clickOrderButtonHeader();
-        CustomerInfoSamokatPage customerInfoSamokat = new CustomerInfoSamokatPage(driver);
+        landingPageSamokat.clickOrderButton(locator);
         customerInfoSamokat.fillCustomerInfo(nameData,surnameData,adressData,metroData,phoneData);
         customerInfoSamokat.clickNextButton();
-        OrderInfoSamokatPage orderInfoSamokatPage = new OrderInfoSamokatPage(driver);
         orderInfoSamokatPage.enterRequiredData(arrivalTimeData,arendaTimeData);
         orderInfoSamokatPage.orderButtonClick();
         orderInfoSamokatPage.confirmOrderButtonClick();
         assertTrue("Заказ не сделан",orderInfoSamokatPage.getOrderConfirmation());
     }
-    @Test
+    /* @Test
     public void enterCustomerInfoTestMainButton(){
         LandingPageSamokat landingPageSamokat = new LandingPageSamokat(driver);
         landingPageSamokat.closeCookie();
@@ -84,7 +90,7 @@ public class OrderTest {
         orderInfoSamokatPage.orderButtonClick();
         orderInfoSamokatPage.confirmOrderButtonClick();
         assertTrue("Заказ не сделан",orderInfoSamokatPage.getOrderConfirmation());
-    }
+    }*/
     @After
     public void tearDown() {
         driver.quit();

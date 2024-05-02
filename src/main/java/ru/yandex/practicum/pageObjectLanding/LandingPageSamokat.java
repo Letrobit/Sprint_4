@@ -16,8 +16,8 @@ public class LandingPageSamokat {
     private final String questionLocator = "accordion__heading-%s";
     private final String answerLocator = "//div[contains(@id, 'accordion__panel')][.='%s']";
 
-    private  final By OrderButtonHeader = By.xpath(".//div[@class='Header_Nav__AGCXC']//button[@class='Button_Button__ra12g' and text()='Заказать']");
-    private  final By OrderButtonMain = By.xpath("//div[@class='Home_FinishButton__1_cWm']/*");
+    public static By OrderButtonHeader = By.xpath(".//div[@class='Header_Nav__AGCXC']//button[@class='Button_Button__ra12g' and text()='Заказать']");
+    public static By OrderButtonMain = By.xpath("//div[@class='Home_FinishButton__1_cWm']/*");
     public static String landingPageURL = "https://qa-scooter.praktikum-services.ru/";
 
     private final By cookieCloseLocator = By.id("rcc-confirm-button");
@@ -38,11 +38,17 @@ public class LandingPageSamokat {
         new WebDriverWait(driver, ofSeconds(5)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(String.format(answerLocator, expectedAnswer))));
         return element.isDisplayed();
     }
-    public void clickOrderButtonHeader(){
+    /*public void clickOrderButtonHeader(){
         driver.findElement(OrderButtonHeader).click();
     }
     public void clickOrderButtonMain(){
         WebElement element = driver.findElement(OrderButtonMain);
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);
+        new WebDriverWait(driver, ofSeconds(15)).until(ExpectedConditions.elementToBeClickable(element));
+        element.click();
+    }*/
+    public void clickOrderButton(By locator){
+        WebElement element = driver.findElement(locator);
         ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);
         new WebDriverWait(driver, ofSeconds(15)).until(ExpectedConditions.elementToBeClickable(element));
         element.click();

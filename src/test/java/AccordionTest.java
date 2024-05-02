@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class AccordionTest {
     //private WebDriverFactory webDriverFactory= new WebDriverFactory();
     private WebDriver driver;
+    private LandingPageSamokat landingPageSamokat;
     private final String expectedAnswer;
     private final int index;
 
@@ -42,10 +43,10 @@ public void setup(){
     //driver = new FirefoxDriver();
     driver = new ChromeDriver();
     driver.get(LandingPageSamokat.landingPageURL);
+    landingPageSamokat = new LandingPageSamokat(driver);
 }
     @Test
     public void accordionTest() {
-        LandingPageSamokat landingPageSamokat = new LandingPageSamokat(driver);
         landingPageSamokat.closeCookie();
         landingPageSamokat.expandQuestion(index);
         boolean answerIsDisplayed = landingPageSamokat.answerIsDisplayed(expectedAnswer);
